@@ -2,10 +2,14 @@
 VERSION=$(grep 'version=' src/main/resources/info.config | awk -F'=' '{print $2}')
 echo "Creating DMG for version $VERSION"
 
+# for ARM or Intel
+ARCH=$1
+
 JAR="gitlab_gui-$VERSION.jar"
 
+
 jpackage --input target/ \
-  --name Gitlab_GUI \
+  --name Gitlab_GUI_$ARCH \
   --main-jar $JAR \
   --main-class org.gitlab_gui.Main \
   --type dmg \
