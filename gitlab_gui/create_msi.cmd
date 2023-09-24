@@ -8,8 +8,6 @@ for /f "tokens=1,2 delims==" %%a in (src\main\resources\info.config) do (
   )
 )
 
-echo %VERSION%
-
 set JAR=gitlab_gui-%VERSION%.jar
 
 jpackage --input target\ ^
@@ -19,6 +17,7 @@ jpackage --input target\ ^
   --type msi   ^
   --win-shortcut ^
   --win-menu ^
+  --win-dir-chooser ^
   --app-version %VERSION% ^
   --vendor "Alexandros Antonakakis" ^
   --copyright "Copyright 2023 Alexandros Antonakakis" ^
