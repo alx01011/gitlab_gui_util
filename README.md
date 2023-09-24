@@ -45,4 +45,6 @@ Due to some security settings in macOS, it is impossible to list files and direc
 
 ## Windows
 
-You can install the native windows app by downloading the provided .msi. The installer will prompt for installation directory. App can be uninstalled via Settings/Apps or via the Control panel.
+You can install the native windows app by downloading the provided .msi. 
+The installer will prompt for installation directory.
+App can be uninstalled via Settings/Apps or via the Control panel.
