@@ -41,4 +41,8 @@ To build the jar, run `mvn clean package`
 Due to some security settings in macOS, it is impossible to list files and directories if you have launched the .jar by double clicking.
 
 **You will have to execute it via** `java -jar gitlab_gui-[version].jar` 
-**OR** use the provided `.dmg` file which will work by simply clicking on the application, you don't have to drag the app into /Application.
+**OR** use the provided `.dmg` file which contains a native build of the app.
+
+## Windows
+
+You can install the native windows app by downloading the provided .msi. The installer will prompt for installation directory. App can be uninstalled via Settings/Apps or via the Control panel.
