@@ -44,8 +44,9 @@ public class VisibilityManager {
     private void createUIComponents() {
         JPanel visibilityPanel = new JPanel(new GridLayout(3, 1, 2, 1));
         visibilityPanel.add(new JLabel("Current Visibility:  "));
-        // hacky way of getting rid of the text, might change later
-        visibilityPanel.add(new JLabel(this.projectInfo.getVisibility()));
+
+        JLabel visibilityLabel = new JLabel(this.projectInfo.getVisibility());
+        visibilityPanel.add(visibilityLabel);
 
         visibilityPanel.add(new JLabel("Visibility:  "));
         String[] visibilityStrings = {"private", "internal", "public"};
@@ -64,6 +65,7 @@ public class VisibilityManager {
             } else {
                 JOptionPane.showMessageDialog(visibilityFrame,
                         "Visibility changed successfully");
+                visibilityLabel.setText(visibility);
             }
 
             callback.execute();
