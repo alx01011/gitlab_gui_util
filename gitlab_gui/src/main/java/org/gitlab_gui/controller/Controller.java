@@ -12,6 +12,7 @@ import org.gitlab_gui.model.project_info.ProjectInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -537,24 +538,26 @@ public class Controller {
         }
     }
 
-    public String getProjectIdFromProjectName(String pname) {
+    public ProjectInfo getProjectFromURI(String puri) {
         //https://gitlab.com/api/v4/projects?owned=true&search=pname
+
+        String pname = puri.split("/")[puri.split("/").length - 1].split("\\.")[0];
 
         try {
             String uriString = "https://" + this.gitlabUrl + ":" + port
                     + "/api/v4/projects?owned=true&search=" + pname;
             URI uri = URI.create(uriString);
-
             HttpURLConnection con = (HttpURLConnection) uri.toURL().openConnection();
 
             con.setRequestMethod("GET");
-            con.setRequestProperty("PRIVATE-TOKEN", this.token);
+            con.addRequestProperty("PRIVATE-TOKEN", this.token);
 
             con.connect();
 
+            InputStreamReader inputStreamReader = new InputStreamReader(con.getInputStream());
+
             // get response body
-            BufferedReader in = new BufferedReader(
-                    new java.io.InputStreamReader(con.getInputStream()));
+            BufferedReader in = new BufferedReader(inputStreamReader);
 
             String inputLine;
             StringBuilder content = new StringBuilder();
@@ -563,19 +566,26 @@ public class Controller {
                 content.append(inputLine);
             }
 
-            System.out.println(content);
-
             in.close();
 
             ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            TypeReference<List<Map<String, Object>>> typeRef
+            TypeReference<List<ProjectInfo>> typeRef
                     = new TypeReference<>() {
             };
 
-            List<Map<String, Object>> objects = mapper.readValue(content.toString(), typeRef);
+            List<ProjectInfo> objects = mapper.readValue(content.toString(), typeRef);
 
-            return objects.get(0).get("id").toString();
+            for (ProjectInfo projectInfo : objects) {
+                String projectName = projectInfo.getWeb_url().split("/")[projectInfo.getWeb_url().split("/").length - 1].split("\\.")[0];
+                if (projectName.equals(pname)) {
+                    return projectInfo;
+                }
+            }
+            return null;
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -583,7 +593,7 @@ public class Controller {
 
     }
 
-    public boolean addCommit(Map<String, Object> payload) {
+    public boolean addCommit(Map<String, Object> payload) {https://gitlab.csd.uoc.gr/csd48
         // curl --request POST --header "PRIVATE-TOKEN: <your_access_token>" --header "Content-Type: application/json" \
         //     --data "$PAYLOAD" "https://gitlab.example.com/api/v4/projects/1/repository/commits"
 
