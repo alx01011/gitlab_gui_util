@@ -13,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainView {
     private final JFrame frame;
@@ -109,7 +108,7 @@ public class MainView {
 
         JButton visibilityButton = new JButton("Visibility Options");
         visibilityButton.setEnabled(false);
-        visibilityButton.addActionListener( e ->
+        visibilityButton.addActionListener(e ->
                 {
                     Callback callback = () -> {
                         try {
@@ -120,7 +119,7 @@ public class MainView {
                         }
                     };
 
-                        new VisibilityManager(projectInfo, callback);
+                    new VisibilityManager(projectInfo, callback);
                 }
         );
 
@@ -186,6 +185,7 @@ public class MainView {
             visibilityButton.setEnabled(false);
             fileManagerButton.setEnabled(false);
 
+
             if (projectIdField.getText().isEmpty()) {
                 resultTextArea.setText("Error: Project ID field is empty");
                 return;
@@ -196,26 +196,19 @@ public class MainView {
                 return;
             }
 
-            // if it's a URL we have to call the projects api to get the id
-
-            if (projectIdField.getText().contains("http")) {
-                String[] urlParts = projectIdField.getText().split("/");
-                String projectName = urlParts[urlParts.length - 1];
-
-                try {
-                    projectIdField.setText(controller.getProjectIdFromProjectName(projectName));
-                } catch (Exception ex) {
-                    resultTextArea.setText("Error: " + ex.getMessage());
-                    return;
-                }
-            }
-
-
-            controller.setProjectId(projectIdField.getText());
+            // fetch token before any api call
             controller.setToken(new String(mainTokenField.getPassword()));
 
+
             try {
-                projectInfo = controller.getProjectInfo();
+                // if it's a URL we have to call the projects api to get the id
+                if (projectIdField.getText().contains("http")) {
+                    projectInfo = controller.getProjectFromURI(projectIdField.getText());
+                    controller.setProjectId(Integer.toString(projectInfo.getId()));
+                } else {
+                    controller.setProjectId(projectIdField.getText());
+                    projectInfo = controller.getProjectInfo();
+                }
 
                 setTextArea(resultTextArea);
                 membersManagerButton.setEnabled(true);
@@ -372,8 +365,6 @@ public class MainView {
         settingsFrame.add(mainPanel);
         settingsFrame.setVisible(true);
     }
-
-
 
 
 }
