@@ -6,6 +6,7 @@ import org.gitlab_gui.model.project_info.ProjectInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -25,7 +26,7 @@ public class VisibilityManager {
         visibilityFrame = new JFrame("Visibility");
         visibilityFrame.setSize(600, 150);
         visibilityFrame.setLocationRelativeTo(null);
-        visibilityFrame.setResizable(false);
+        //visibilityFrame.setResizable(false);
         visibilityFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // reset result text on exit
@@ -42,7 +43,9 @@ public class VisibilityManager {
     }
 
     private void createUIComponents() {
-        JPanel visibilityPanel = new JPanel(new GridLayout(3, 1, 2, 1));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        JPanel visibilityPanel = new JPanel(new GridLayout(3, 2, 2, 1));
         visibilityPanel.add(new JLabel("Current Visibility:  "));
 
         JLabel visibilityLabel = new JLabel(this.projectInfo.getVisibility());
@@ -54,7 +57,11 @@ public class VisibilityManager {
         visibilityList.setSelectedIndex(0);
         visibilityPanel.add(visibilityList);
 
+
+
         JButton saveButton = new JButton("Save");
+
+        saveButton.setEnabled(false);
         saveButton.setHorizontalAlignment(JLabel.CENTER);
         saveButton.addActionListener(e -> {
             String visibility = (String) visibilityList.getSelectedItem();
@@ -72,9 +79,20 @@ public class VisibilityManager {
 
         });
 
-        visibilityPanel.add(saveButton);
+        saveButton.setPreferredSize(new Dimension(100, 40));
 
-        visibilityFrame.add(visibilityPanel);
+        visibilityList.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String selected = (String) e.getItem();
+                saveButton.setEnabled(!selected.equals(this.projectInfo.getVisibility()));
+            }
+        });
+
+        mainPanel.add(visibilityPanel, BorderLayout.NORTH);
+        mainPanel.add(saveButton, BorderLayout.SOUTH);
+
+
+        visibilityFrame.add(mainPanel);
     }
 
 
